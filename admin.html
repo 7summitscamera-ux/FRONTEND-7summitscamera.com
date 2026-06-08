@@ -2897,7 +2897,7 @@ async function loadProduk(){
   try {
     const { data: rows } = await sbB.from('produk')
       .select('id,nama_produk,kategori_produk,harga_sewa_per_hari,stok_total,stok_dalam_perbaikan,is_deleted,status')
-      .eq('is_deleted', false).eq('status','active').order('nama_produk').limit(2000);
+      .eq('is_deleted', false).eq('status','active').gt('stok_total',0).order('nama_produk').limit(2000);
     _produkAll = rows || [];
     // Enrichments
     const { data: enrich } = await sb.from('product_enrichments').select('*').limit(2000);
@@ -3165,7 +3165,7 @@ async function prodSave(){
 async function loadStats(){
   // products
   try {
-    const { count: pc } = await sbB.from('produk').select('id',{count:'exact',head:true}).eq('is_deleted',false).eq('status','active');
+    const { count: pc } = await sbB.from('produk').select('id',{count:'exact',head:true}).eq('is_deleted',false).eq('status','active').gt('stok_total',0);
     $('stat-produk').textContent = pc || 0;
   } catch(e){}
   try {

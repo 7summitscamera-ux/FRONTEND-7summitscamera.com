@@ -967,7 +967,7 @@ async function main() {
   // 3. Fetch all data in parallel
   console.log('  ↳ fetching Supabase...');
   const [produk, enrichAll, faqs, locations, settingsArr, packages] = await Promise.all([
-    tryFetch(BOOKING, 'produk', 'select=id,nama_produk,kategori_produk,harga_sewa_per_hari,kelengkapan,stok_total,stok_dalam_perbaikan,cabang_id&is_deleted=eq.false&status=eq.active&limit=2000'),
+    tryFetch(BOOKING, 'produk', 'select=id,nama_produk,kategori_produk,harga_sewa_per_hari,kelengkapan,stok_total,stok_dalam_perbaikan,cabang_id&is_deleted=eq.false&status=eq.active&stok_total=gt.0&limit=2000'),
     tryFetch(CMS, 'product_enrichments', 'select=*&limit=2000'),
     tryFetch(CMS, 'faqs', 'select=*&is_active=eq.true&order=sort_order.asc&limit=200'),
     tryFetch(CMS, 'locations', 'select=*&is_active=eq.true&order=sort_order.asc&limit=20'),
