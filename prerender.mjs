@@ -1023,29 +1023,33 @@ async function main() {
   // 8. Pre-render pdp.html template (fallback for products without static file)
   await fs.writeFile(path.join(OUT, 'pdp.html'), pdpTpl);
 
-  // 9. Generate one static file per product
+  // 9. Generate one static file per product (deduplicate by slug)
   await fs.mkdir(path.join(OUT, 'product'), { recursive: true });
-  let count = 0;
+  const seenSlugs = new Set();
+  let count = 0, dupCount = 0;
   for (const p of produk) {
-    const html = await prerenderPdp(pdpTpl, p, enrichMap[p.id], produk, enrichMap);
     const slug = slugify(p.nama_produk);
     if (!slug) continue;
+    if (seenSlugs.has(slug)) { dupCount++; continue; }
+    seenSlugs.add(slug);
+    const html = await prerenderPdp(pdpTpl, p, enrichMap[p.id], produk, enrichMap);
     await fs.writeFile(path.join(OUT, 'product', `${slug}.html`), html);
     count++;
   }
-  console.log(`  ↳ wrote ${count} product/<slug>.html files`);
+  if (dupCount > 0) console.warn(`  ⚠ skipped ${dupCount} produk dengan slug duplikat`);
+  console.log(`  ↳ wrote ${count} product/<slug>.html files (dari ${produk.length} produk aktif)`);
 
-  // 10. Update sitemap.xml with all product URLs
+  // 10. Update sitemap.xml with all product URLs (deduplicated)
   try {
     let sitemap = await fs.readFile(path.join(SRC, 'sitemap.xml'), 'utf8');
-    const productUrls = produk.map((p) => `  <url>
-    <loc>${SITE_URL}/product/${slugify(p.nama_produk)}</loc>
+    const productUrls = [...seenSlugs].map((slug) => `  <url>
+    <loc>${SITE_URL}/product/${slug}</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>`).join('\n');
     sitemap = sitemap.replace('</urlset>', `${productUrls}\n</urlset>`);
     await fs.writeFile(path.join(OUT, 'sitemap.xml'), sitemap);
-    console.log(`  ↳ updated sitemap.xml with ${produk.length} product URLs`);
+    console.log(`  ↳ updated sitemap.xml with ${seenSlugs.size} product URLs`);
   } catch (e) { console.warn(`⚠ sitemap update skipped: ${e.message}`); }
 
   console.log(`✓ Prerender done in ${((Date.now() - t0) / 1000).toFixed(2)}s`);
