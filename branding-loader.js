@@ -2,6 +2,55 @@
 // Fetches site_settings from Supabase and applies them as CSS custom-properties
 // + dynamic font import + logo replacement. Runs on every page that loads it.
 
+// TEMPORARY: booking fallback ke WhatsApp selama domain sewakamerabandung.id
+// berstatus serverHold di PANDI (sejak 20 Okt 2026). Set BOOKING_FALLBACK_WA ke
+// false (atau hapus blok ini) setelah domain aktif kembali.
+(function () {
+  const BOOKING_FALLBACK_WA = true;
+  if (!BOOKING_FALLBACK_WA) return;
+
+  const WA_NUMBER = '6281121114410';
+  const WA_TEXT = 'Halo 7summits Camera, saya mau booking / cek ketersediaan gear.';
+  const BOOKING_RE = /^\s*<?\s*(https?:)?\/\/(app|booking)\.sewakamerabandung\.id/i;
+
+  function waUrl() {
+    // Pakai nomor dari link wa.me yang sudah ada di halaman (bisa di-override via site_settings)
+    const existing = document.querySelector('a[href*="wa.me/"]:not([data-booking-fallback])');
+    const m = existing && existing.href.match(/wa\.me\/(\d+)/);
+    return 'https://wa.me/' + (m ? m[1] : WA_NUMBER) + '?text=' + encodeURIComponent(WA_TEXT);
+  }
+
+  function rewriteLinks(root) {
+    (root || document).querySelectorAll('a[href]').forEach(a => {
+      if (!BOOKING_RE.test(a.getAttribute('href'))) return;
+      a.href = waUrl();
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.setAttribute('data-booking-fallback', '');
+    });
+  }
+
+  // Tombol yang memakai window.open('https://app.sewakamerabandung.id') di onclick
+  const origOpen = window.open;
+  window.open = function (url, ...rest) {
+    if (typeof url === 'string' && BOOKING_RE.test(url)) url = waUrl();
+    return origOpen.call(window, url, ...rest);
+  };
+
+  // Jaring pengaman untuk link yang dirender dinamis setelah halaman dimuat
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (a && BOOKING_RE.test(a.getAttribute('href'))) rewriteLinks(a.parentNode);
+  }, true);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => rewriteLinks());
+  } else {
+    rewriteLinks();
+  }
+  new MutationObserver(() => rewriteLinks()).observe(document.documentElement, { childList: true, subtree: true });
+})();
+
 (function () {
   const SB_URL = 'https://mchsqiujfhvzbxzdqeeb.supabase.co';
   const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jaHNxaXVqZmh2emJ4emRxZWViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzMTAyMDIsImV4cCI6MjA5Mzg4NjIwMn0.HUIpHZWHfBx_IwyA-ODxgVilK7y5DMt5o2rxfnDYlXM';
