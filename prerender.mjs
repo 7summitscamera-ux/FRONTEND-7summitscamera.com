@@ -20,7 +20,7 @@ const BOOKING = {
 };
 
 const SITE_URL = 'https://sewakamerabandung.id';
-const BOOKING_URL = 'https://booking.sewakamerabandung.id';
+const BOOKING_URL = 'https://app.7summitscamera.com';
 const SRC = '.';
 const OUT = 'dist';
 
@@ -725,7 +725,7 @@ function buildProductFaqs({ cleaned, kat, harga, brand, name, cabang, available 
     { q: `Berapa harga sewa ${cleaned} di Bandung?`, a: `Sewa ${cleaned} di <strong>7summits Camera Bandung</strong> adalah <strong>Rp ${fmt(harga)}/hari</strong>. Dengan promo 3 hari bayar 2 hari, total 3 hari hanya <strong>Rp ${fmt(harga3)}</strong> — hemat ~33% vs sewa harian biasa.` },
     { q: `Apa saja syarat sewa ${cleaned}?`, a: `Cukup <strong>KTP aktif + KTP penjamin</strong> (kerabat dekat) + foto selfie dengan KTP. Tidak perlu rekening bank, tidak perlu deposit besar. Untuk gear premium di atas Rp 500rb/hari, deposit menyesuaikan harga unit.` },
     { q: `Bisakah ${cleaned} diantar ke lokasi shoot?`, a: `Bisa. Tersedia antar-jemput via ojek online di area Bandung Kota (ongkos sesuai jarak). Pickup mandiri di lokasi <strong>Cisaranten</strong> atau <strong>Sriwijaya</strong> gratis. Hubungi WhatsApp untuk koordinasi antar.` },
-    { q: `Bagaimana cara booking ${cleaned}?`, a: `Tiga cara: (1) Booking online di <a href="https://booking.sewakamerabandung.id">booking.sewakamerabandung.id</a> — pilih tanggal, langsung konfirm. (2) Tambah ke <strong>Daftar Inquiry</strong> dan submit via WhatsApp untuk konsultasi dulu. (3) Walk-in ke lokasi (jam buka 09:00–20:00 WIB, 7 hari/minggu). Tim respon < 30 menit di jam kerja.` }
+    { q: `Bagaimana cara booking ${cleaned}?`, a: `Tiga cara: (1) Booking online di <a href="https://app.7summitscamera.com">app.7summitscamera.com</a> — pilih tanggal, langsung konfirm. (2) Tambah ke <strong>Daftar Inquiry</strong> dan submit via WhatsApp untuk konsultasi dulu. (3) Walk-in ke lokasi (jam buka 09:00–20:00 WIB, 7 hari/minggu). Tim respon < 30 menit di jam kerja.` }
   ];
 
   // Category-specific questions

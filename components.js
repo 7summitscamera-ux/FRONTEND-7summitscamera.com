@@ -3,7 +3,7 @@
 // Then in body: <div id="navbar-placeholder"></div> and <div id="footer-placeholder"></div>
 
 const BRAND = {
-  bookingUrl: 'https://app.sewakamerabandung.id',
+  bookingUrl: 'https://app.7summitscamera.com',
   waNumber: '6281121114410',
   instagram: 'https://instagram.com/sewakamerabandung.id',
   youtube: 'https://www.youtube.com/@7summitscamera',
