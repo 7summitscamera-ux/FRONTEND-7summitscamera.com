@@ -664,7 +664,7 @@ function renderProduct(p, en, all, otherEnrich){
       availability: avail ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       itemCondition: 'https://schema.org/UsedCondition',
       url: location.href,
-      seller: {'@type': 'LocalBusiness', name: '7summits Camera', url: 'https://sewakamerabandung.id', telephone: '+6281121114410'}
+      seller: {'@type': 'LocalBusiness', name: '7summits Camera', url: 'https://7summitscamera.com', telephone: '+6281121114410'}
     }
   });
   document.head.appendChild(ldProduct);
@@ -676,8 +676,8 @@ function renderProduct(p, en, all, otherEnrich){
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      {'@type': 'ListItem', position: 1, name: 'Home', item: 'https://sewakamerabandung.id'},
-      {'@type': 'ListItem', position: 2, name: kat || 'Gear', item: `https://sewakamerabandung.id/katalog${kat ? '?cat=' + encodeURIComponent(kat) : ''}`},
+      {'@type': 'ListItem', position: 1, name: 'Home', item: 'https://7summitscamera.com'},
+      {'@type': 'ListItem', position: 2, name: kat || 'Gear', item: `https://7summitscamera.com/katalog${kat ? '?cat=' + encodeURIComponent(kat) : ''}`},
       {'@type': 'ListItem', position: 3, name: nameClean, item: location.href}
     ]
   });
