@@ -26,4 +26,4 @@ Disallow: /*?utm_*
 Disallow: /*?fbclid=
 Disallow: /*?gclid=
 
-Sitemap: https://sewakamerabandung.id/sitemap.xml
+Sitemap: https://7summitscamera.com/sitemap.xml

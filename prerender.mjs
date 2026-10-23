@@ -19,7 +19,7 @@ const BOOKING = {
   key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4Y3NzcnV1dGdwemtnY3Nxcml0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5OTAzMTYsImV4cCI6MjA5MTU2NjMxNn0.NMZqMuEUR2c-V3CnbW-bJNn1bjlS6vHLPUQSD7nArM0'
 };
 
-const SITE_URL = 'https://sewakamerabandung.id';
+const SITE_URL = 'https://7summitscamera.com';
 const BOOKING_URL = 'https://app.7summitscamera.com';
 const SRC = '.';
 const OUT = 'dist';

@@ -104,7 +104,7 @@ function injectFooter() {
       </ul></div>
     </div>
     <div class="footer-btm">
-      <p>© 2025 7summits Camera · sewakamerabandung.id · Bandung, Jawa Barat</p>
+      <p>© 2025 7summits Camera · 7summitscamera.com · Bandung, Jawa Barat</p>
       <div class="fbr">
         <a href="/syarat.html">Syarat & Ketentuan</a>
         <a href="/privasi.html">Privasi</a>
