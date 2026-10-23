@@ -2,45 +2,36 @@
 // Fetches site_settings from Supabase and applies them as CSS custom-properties
 // + dynamic font import + logo replacement. Runs on every page that loads it.
 
-// TEMPORARY: booking fallback ke WhatsApp selama domain sewakamerabandung.id
-// berstatus serverHold di PANDI (sejak 20 Okt 2026). Set BOOKING_FALLBACK_WA ke
-// false (atau hapus blok ini) setelah domain aktif kembali.
+// TEMPORARY: domain sewakamerabandung.id berstatus serverHold di PANDI (sejak
+// 20 Okt 2026), sehingga app./booking. di domain itu NXDOMAIN. Link lama yang
+// masih tersisa (mis. dari site_settings / konten DB) dialihkan ke portal
+// customer di app.7summitscamera.com. Hapus blok ini setelah domain pulih.
 (function () {
-  const BOOKING_FALLBACK_WA = true;
-  if (!BOOKING_FALLBACK_WA) return;
+  const OLD_BOOKING_RE = /^(\s*<?\s*)(https?:)?\/\/(app|booking)\.sewakamerabandung\.id/i;
+  const NEW_BOOKING = 'https://app.7summitscamera.com';
 
-  const WA_NUMBER = '6281121114410';
-  const WA_TEXT = 'Halo 7summits Camera, saya mau booking / cek ketersediaan gear.';
-  const BOOKING_RE = /^\s*<?\s*(https?:)?\/\/(app|booking)\.sewakamerabandung\.id/i;
-
-  function waUrl() {
-    // Pakai nomor dari link wa.me yang sudah ada di halaman (bisa di-override via site_settings)
-    const existing = document.querySelector('a[href*="wa.me/"]:not([data-booking-fallback])');
-    const m = existing && existing.href.match(/wa\.me\/(\d+)/);
-    return 'https://wa.me/' + (m ? m[1] : WA_NUMBER) + '?text=' + encodeURIComponent(WA_TEXT);
+  function migrate(url) {
+    return url.replace(OLD_BOOKING_RE, (_, lead) => lead + NEW_BOOKING);
   }
 
   function rewriteLinks(root) {
     (root || document).querySelectorAll('a[href]').forEach(a => {
-      if (!BOOKING_RE.test(a.getAttribute('href'))) return;
-      a.href = waUrl();
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.setAttribute('data-booking-fallback', '');
+      const href = a.getAttribute('href');
+      if (OLD_BOOKING_RE.test(href)) a.setAttribute('href', migrate(href));
     });
   }
 
-  // Tombol yang memakai window.open('https://app.sewakamerabandung.id') di onclick
+  // Tombol yang memakai window.open(<link domain lama>) di onclick
   const origOpen = window.open;
   window.open = function (url, ...rest) {
-    if (typeof url === 'string' && BOOKING_RE.test(url)) url = waUrl();
+    if (typeof url === 'string' && OLD_BOOKING_RE.test(url)) url = migrate(url);
     return origOpen.call(window, url, ...rest);
   };
 
   // Jaring pengaman untuk link yang dirender dinamis setelah halaman dimuat
   document.addEventListener('click', e => {
     const a = e.target.closest && e.target.closest('a[href]');
-    if (a && BOOKING_RE.test(a.getAttribute('href'))) rewriteLinks(a.parentNode);
+    if (a && OLD_BOOKING_RE.test(a.getAttribute('href'))) rewriteLinks(a.parentNode);
   }, true);
 
   if (document.readyState === 'loading') {
@@ -243,8 +234,9 @@
     if (s.booking_url) {
       const bookingUrl = s.booking_url.trim();
       // Only apply if it's a valid absolute URL (starts with http://, https://, or //)
-      if (/^(https?:)?\/\//.test(bookingUrl)) {
-        document.querySelectorAll('a[href*="app.sewakamerabandung.id"]').forEach(a => {
+      // Abaikan booking_url lama yang masih menunjuk ke domain serverHold
+      if (/^(https?:)?\/\//.test(bookingUrl) && !/sewakamerabandung\.id/i.test(bookingUrl)) {
+        document.querySelectorAll('a[href*="app.7summitscamera.com"]').forEach(a => {
           a.href = bookingUrl + (a.hash || '');
         });
       }
