@@ -81,11 +81,19 @@ class Timeline:
         self.duration = t
 
     def map_span(self, s, e):
-        """Map a source span to timeline; returns (ts, te) or None if s is cut out."""
+        """Map a source span to timeline; returns (ts, te) or None if s is cut out.
+
+        The end may land in a later segment (cards spanning a jump cut); if it falls in a
+        removed gap it is clamped to the end of the last segment before it."""
+        start = None
         for a, b, t0 in self.segs:
-            if a <= s < b:
-                return t0 + s - a, t0 + min(e, b) - a
-        return None
+            if start is None and a <= s < b:
+                start = t0 + s - a
+            if start is not None:
+                if e <= b:
+                    return start, t0 + max(0.0, e - a)
+                end = t0 + b - a
+        return (start, end) if start is not None else None
 
 
 # ---------- captions & cards (ASS) ----------
