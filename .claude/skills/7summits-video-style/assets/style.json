@@ -1,0 +1,62 @@
+{
+  "_comment": "7summits video style tokens. Measured from the reference video (35s, 9:16, talking-head + B-roll). Change values here, not in render.py.",
+  "canvas": { "w": 1080, "h": 1920, "fps": 30 },
+  "colors": {
+    "white": "#FFFFFF",
+    "orange": "#FA6C00",
+    "green": "#45FA00",
+    "shadow": "#000000"
+  },
+  "fonts": {
+    "caption": "Inter SemiBold",
+    "keyword": "Inter ExtraBold",
+    "accent": "Playfair Display SemiBold",
+    "morph_serif": "Playfair Display Medium"
+  },
+  "sizes": {
+    "caption": 44,
+    "lead": 46,
+    "keyword": 96,
+    "accent": 64,
+    "credit": 30,
+    "box_padding": 10
+  },
+  "layout": {
+    "caption_y": 0.515,
+    "card_y": 0.47,
+    "caption_margin_x": 110,
+    "watermark_y": 0.065,
+    "watermark_logo_px": 44,
+    "watermark_text_px": 28,
+    "aroll_focus_y": 0.38
+  },
+  "captions": {
+    "max_words": 6,
+    "max_chars": 42,
+    "break_gap": 0.45,
+    "hold": 0.25,
+    "hook_cursor_secs": 3.0,
+    "cursor": "|"
+  },
+  "cards": {
+    "stagger": 0.12,
+    "pop_ms": 140,
+    "pop_scale": 118,
+    "morph_dur": 0.35
+  },
+  "motion": {
+    "transition_dur": 0.3,
+    "punch_levels": [1.0, 1.15],
+    "zoom_in_amount": 0.4,
+    "zoom_out_amount": 0.5,
+    "kenburns_amount": 0.08,
+    "slide_blur_v": 60,
+    "zoom_blur": 25
+  },
+  "audio": {
+    "loudness_lufs": -14,
+    "whoosh_volume": 0.35,
+    "pop_volume": 0.3
+  },
+  "export": { "crf": 18, "preset": "medium", "audio_bitrate": "192k" }
+}

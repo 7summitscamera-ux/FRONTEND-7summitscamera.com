@@ -1,0 +1,53 @@
+{
+  "_comment": "Copy this file next to the footage. Paths are relative to this file. Times are SOURCE seconds unless time_base is 'timeline'. Delete the _comment/_note keys freely.",
+  "output": "final.mp4",
+  "watermark": true,
+
+  "aroll": {
+    "src": "talking_head.mp4",
+    "_note_fit": "cover = fill 9:16 (phone footage). contain_blur = keep 16:9 frame whole over blurred fill (use when burned-in captions exist).",
+    "fit": "cover",
+    "crop_x": 0.5,
+    "auto_punch": [1.0, 1.15],
+    "segments": [
+      { "in": 0.40, "out": 2.60 },
+      { "in": 2.95, "out": 5.10 },
+      { "in": 5.40, "out": 9.80, "zoom": 1.2, "focus_y": 0.35 }
+    ]
+  },
+
+  "_note_existing_text": "Only when the footage ALREADY has burned-in text. has_captions=true disables new captions; cards must avoid popups (time) and caption_region (space). Regions are fractions of OUTPUT height.",
+  "existing_text": {
+    "has_captions": false,
+    "caption_region": [0.62, 0.70],
+    "popups": [
+      { "text": "DOOMSCROLLING", "s": 12.0, "e": 13.5, "region": [0.40, 0.50] }
+    ]
+  },
+
+  "captions": {
+    "time_base": "source",
+    "words": "talking_head.words.json"
+  },
+
+  "cards": [
+    { "s": 2.95, "e": 4.20, "lines": ["objek", "objek"], "accent": "ke", "hl": "green" },
+    { "s": 4.30, "e": 5.10, "lead": "lainnya dengan", "lines": ["mulus?"], "hl": "box" },
+    { "s": 7.00, "e": 8.40, "lines": ["follow", "focus"], "hl": "box", "morph": true }
+  ],
+
+  "broll": [
+    {
+      "at_src": 5.6, "dur": 3.2, "layout": "split", "credit": "@creator_handle",
+      "top": { "src": "broll/scene.mp4", "in": 1.0 },
+      "bottom": { "src": "broll/bts.mp4", "in": 0.0, "bw": true },
+      "in_tr": "slideup", "out_tr": "zoomblack"
+    },
+    {
+      "at_src": 8.8, "dur": 1.8, "layout": "full", "src": "broll/gear_closeup.jpg",
+      "bw": true, "kenburns": true, "in_tr": "zoomblur", "out_tr": "slideup"
+    }
+  ],
+
+  "sfx": { "enabled": true, "whoosh": null, "pop": null }
+}
