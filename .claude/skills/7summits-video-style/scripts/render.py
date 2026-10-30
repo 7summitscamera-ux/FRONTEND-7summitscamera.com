@@ -285,13 +285,20 @@ def build_ass(plan, st, tl, plan_dir, brolls):
             if span:
                 mapped.append({**p, "s": span[0], "e": span[1]})
         existing = {**existing, "popups": mapped}
-    if plan["aroll"].get("fit") == "contain_blur":
-        # 16:9 frame sits in the middle: pop-ups go in the blurred band above it, never on the face
-        top = 0.5 - st["canvas"]["w"] * 9 / 16 / st["canvas"]["h"] / 2 * plan["aroll"].get("fg_scale", 1.0)
-        default_ys = [round(top / 2 + 0.04, 3), 0.80]
-    else:
-        default_ys = [st["layout"]["card_y"], 0.36, 0.28, 0.58]
-    place_cards(cards, existing, st, default_ys)
+    ar = plan["aroll"]
+    # 16:9 frame in the middle: pop-ups go in the blurred band above it, never on the face
+    top = 0.5 - st["canvas"]["w"] * 9 / 16 / st["canvas"]["h"] / 2 * ar.get("fg_scale", 1.0)
+    contain_ys = [round(top / 2 + 0.04, 3), 0.80]
+    cover_ys = [st["layout"]["card_y"], 0.36, 0.28, 0.58]
+
+    def fit_at(t):
+        for seg, (a, b, t0) in zip(ar["segments"], tl.segs):
+            if t0 <= t < t0 + b - a:
+                return seg.get("fit", ar.get("fit", "cover"))
+        return ar.get("fit", "cover")
+
+    for c in cards:
+        place_cards([c], existing, st, contain_ys if fit_at(c["s"]) == "contain_blur" else cover_ys)
 
     def blocked(t):
         return any(c["s"] - 0.02 <= t < c["e"] for c in cards)
@@ -383,9 +390,9 @@ def render_aroll(plan, st, tmp, draft, plan_dir):
     levels = ar.get("auto_punch", st["motion"]["punch_levels"])
     focus_y = ar.get("focus_y", st["layout"]["aroll_focus_y"])
     audio = has_audio(src)
-    fit = ar.get("fit", "cover")
     files = []
     for i, seg in enumerate(ar["segments"]):
+        fit = seg.get("fit", ar.get("fit", "cover"))  # per-segment override enables hybrid layouts
         z = seg.get("zoom", levels[i % len(levels)] if levels else 1.0)
         fy = seg.get("focus_y", focus_y)
         cx = seg.get("crop_x", ar.get("crop_x", 0.5))

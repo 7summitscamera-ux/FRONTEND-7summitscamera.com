@@ -66,6 +66,13 @@ by re-timing the card; do not just delete the check.
 
 Footage without captions → add `captions` (word timestamps or lines) plus `cards`.
 
+**Hybrid layout for pre-edited 16:9 footage** (typography/graphics already burned in):
+map every on-screen text window with a 0.5 s timestamped frame grid, then give those segments
+`"fit": "contain_blur", "zoom": 1.0` and keep clean talking-head segments on `cover` with punch-ins.
+List the same windows in `existing_text.popups` so new cards land only in the clean gaps.
+Check a draft frame just after each window ends, since burned-in text often lingers 0.3–0.5 s past the cut.
+For 4K/HEVC sources, make a 540p proxy first (analysis, transcript, drafts) and render the final from the original.
+
 ### 5. Preview, check, then render
 1. `render.py plan.json --dry-run`: check timeline, chunks, and cards.
 2. `render.py plan.json --draft`, then extract frames at every card, transition, and B-roll
