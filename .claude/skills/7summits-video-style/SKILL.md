@@ -73,6 +73,17 @@ List the same windows in `existing_text.popups` so new cards land only in the cl
 Check a draft frame just after each window ends, since burned-in text often lingers 0.3–0.5 s past the cut.
 For 4K/HEVC sources, make a 540p proxy first (analysis, transcript, drafts) and render the final from the original.
 
+**Series clipping (one long video → several ~1 min clips)**
+1. `scripts/detect_letterbox.sh proxy.mp4` splits host parts from letterboxed film/B-roll inserts.
+   Dark inserts without letterbox still need a manual check against the transcript.
+2. One clip per topic/chapter: shared series hook (the video's intro) + topic section (jump-cut) +
+   10–15 s of the best insert + CTA card on the last 2.8 s ("tonton full di / YOUTUBE / 7SUMMITS CAMERA").
+3. Map text windows per section with 0.5 s timestamped grids, then build segments with
+   `scripts/auto_segments.py words.json START END --text a-b ... --close a-b ...`.
+4. Add a series card in the hook ("seri ... / #n TOPIK") and 2–3 emphasis cards per clip in clean gaps.
+5. Draft one clip, check framing (face not covered: cover cards at y ≈ 0.64 for wide desk shots), then batch-render the rest.
+6. Warn the user about copyrighted film excerpts (Content ID) on IG/TikTok.
+
 ### 5. Preview, check, then render
 1. `render.py plan.json --dry-run`: check timeline, chunks, and cards.
 2. `render.py plan.json --draft`, then extract frames at every card, transition, and B-roll
