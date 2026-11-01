@@ -410,22 +410,26 @@ def render_aroll(plan, st, tmp, draft, plan_dir):
             fc = (f"[0:v]fps={fps},scale={W}:{H}:force_original_aspect_ratio=increase,"
                   f"crop={W}:{H}:(iw-ow)*{cx}:(ih-oh)/2,setsar=1,scale={zw}:{zh},"
                   f"crop={W}:{H}:(iw-ow)/2:(ih-oh)*{fy}[v]")
-        out = tmp / f"aroll_{i:03d}.mp4"
+        # .mkv + PCM: no AAC priming per piece, so jump cuts concat without drift
+        out = tmp / f"aroll_{i:03d}.mkv"
         cmd = ["ffmpeg", "-y", "-v", "error", "-ss", str(seg["in"]), "-t", f"{d:.3f}", "-i", str(src)]
         if not audio:
             cmd += ["-f", "lavfi", "-t", f"{d:.3f}", "-i", "anullsrc=r=48000:cl=stereo"]
         cmd += ["-filter_complex", fc, "-map", "[v]", "-r", str(fps)]
         if audio:
             cmd += ["-map", "0:a", "-af",
-                    f"afade=t=in:d=0.01,afade=t=out:st={max(0, d - 0.015):.3f}:d=0.015"]
+                    f"afade=t=in:d=0.01,afade=t=out:st={max(0, d - 0.015):.3f}:d=0.015,"
+                    f"apad,atrim=end={d:.6f}"]
         else:
             cmd += ["-map", "1:a"]
-        cmd += enc_args(st, draft) + ["-t", f"{d:.3f}", str(out)]
+        frames = round(d * fps)
+        cmd += enc_args(st, draft)[:8] + ["-c:a", "pcm_s16le", "-ar", "48000", "-ac", "2",
+                                          "-frames:v", str(frames), str(out)]
         run(cmd)
         files.append(out)
     lst = tmp / "aroll.txt"
     lst.write_text("".join(f"file '{f.name}'\n" for f in files))
-    base = tmp / "base.mp4"
+    base = tmp / "base.mkv"
     run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", lst.name,
          "-c", "copy", base.name], cwd=tmp)
     return base
@@ -622,6 +626,10 @@ def main():
     if plan.get("canvas"):
         st["canvas"].update(plan["canvas"])
 
+    # quantize every segment to whole frames so the planned timeline matches the video exactly
+    fps = st["canvas"]["fps"]
+    for seg in plan["aroll"]["segments"]:
+        seg["out"] = seg["in"] + round((seg["out"] - seg["in"]) * fps) / fps
     tl = Timeline(plan["aroll"]["segments"])
     brolls = []
     for b in plan.get("broll", []):
