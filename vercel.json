@@ -54,7 +54,7 @@
     {"source": "/home-auto-parts-v3/:rest*", "has": [{"type": "host", "value": "sewakamerabandung.id"}], "destination": "https://7summitscamera.com/katalog", "permanent": true},
     {"source": "/home-accessories-v2/:rest*", "has": [{"type": "host", "value": "sewakamerabandung.id"}], "destination": "https://7summitscamera.com/katalog", "permanent": true},
     {"source": "/", "has": [{"type": "host", "value": "sewakamerabandung.id"}], "destination": "https://7summitscamera.com/", "permanent": true},
-    {"source": "/:path((?!(?:19|20)\\d\\d/|category/|tag/|feed|author/|wp-|xmlrpc|comments/).+)", "has": [{"type": "host", "value": "sewakamerabandung.id"}], "destination": "https://7summitscamera.com/:path", "permanent": true}
+    {"source": "/:path((?!(?:19|20)\\d\\d/|category/|tag/|feed|author/|wp-|xmlrpc|comments/|ads\\.txt).+)", "has": [{"type": "host", "value": "sewakamerabandung.id"}], "destination": "https://7summitscamera.com/:path", "permanent": true}
   ],
   "rewrites": [
     { "source": "/product", "destination": "/" },

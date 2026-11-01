@@ -28,7 +28,7 @@ const COPY_FILES = [
   'design-system.css','article.css','area.css','auth.css',
   'components.js','cart.js','branding-loader.js','auth.js',
   'logo-7summits.png','logo-7summits-mark.png','vercel.json',
-  'robots.txt','sitemap.xml','migrations.sql','auth-migration.sql','deploy-hook-migration.sql',
+  'robots.txt','ads.txt','sitemap.xml','migrations.sql','auth-migration.sql','deploy-hook-migration.sql',
   'locations-amenities-migration.sql','faq-categories-migration.sql','stats-brands-migration.sql',
   'brand-slider-settings-migration.sql','packages-migration.sql','reviews-migration.sql'
 ];
