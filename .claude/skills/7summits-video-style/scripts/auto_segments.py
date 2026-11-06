@@ -6,7 +6,7 @@ Usage:
                            [--gap 0.35] [--min-cover 0.8]
 
 --text   windows with burned-in text/graphics -> contain_blur, zoom 1.0
---close  close-up shots (kept center-framed, still alternate punch-in)
+--close  close-up shots; with --close-crop-x they are reframed horizontally (face off-center)
 Prints a JSON list ready for plan["aroll"]["segments"].
 """
 import argparse
@@ -25,6 +25,7 @@ def main():
     ap.add_argument("end", type=float)
     ap.add_argument("--text", type=span, nargs="*", default=[])
     ap.add_argument("--close", type=span, nargs="*", default=[])
+    ap.add_argument("--close-crop-x", type=float, help="crop_x for close-up pieces (0=left, 1=right)")
     ap.add_argument("--gap", type=float, default=0.35, help="pause longer than this is cut")
     ap.add_argument("--pad", type=float, default=0.08)
     ap.add_argument("--min-cover", type=float, default=0.8,
@@ -50,18 +51,25 @@ def main():
         for x, y in zip(cuts, cuts[1:]):
             mid = (x + y) / 2
             contain = any(p <= mid < q for p, q in a.text)
-            if not contain and y - x < a.min_cover:
-                contain = True
-            pieces.append((x, y, contain))
+            close = any(p <= mid < q for p, q in a.close)
+            pieces.append([x, y, contain, close])
+
+    # a short full-crop sliver next to a contain piece joins it, so the layout does not flash
+    for i, pc in enumerate(pieces):
+        nb = [pieces[j][2] for j in (i - 1, i + 1) if 0 <= j < len(pieces)]
+        if not pc[2] and pc[1] - pc[0] < a.min_cover and any(nb):
+            pc[2] = True
 
     out, k = [], 0
-    for x, y, contain in pieces:
+    for x, y, contain, close in pieces:
         d = {"in": round(x, 2), "out": round(y, 2)}
         if contain:
             d.update(fit="contain_blur", zoom=1.0)
         else:
             d["zoom"] = [1.0, 1.15][k % 2]
             k += 1
+            if close and a.close_crop_x is not None:
+                d["crop_x"] = a.close_crop_x
         out.append(d)
     print(json.dumps(out, indent=1))
 
