@@ -84,6 +84,17 @@ For 4K/HEVC sources, make a 540p proxy first (analysis, transcript, drafts) and 
 5. Draft one clip, check framing (face not covered: cover cards at y ≈ 0.64 for wide desk shots), then batch-render the rest.
 6. Warn the user about copyrighted film excerpts (Content ID) on IG/TikTok.
 
+**Cut safety & framing (learned from client revisions)**
+- Always pass `--audio proxy.mp4` to `auto_segments.py` and cut only real pauses (`--gap 0.6`).
+  Cuts then land mid-pause, ≥0.12 s after the last kept word and never into the next one.
+  Transcript word ends are often early and music beds hide silence, so never cut on raw word times.
+  Prefer sentence-complete ranges over hitting exactly 60 s: a clipped word is worse than 61 s.
+- No punch-in on close-ups (`--close`); wide shots punch at most 1.08 (`--punch 1.0,1.08`).
+- "Portrait semua" = no contain-blur at all. For each burned-in text window pick a `crop_x`
+  that keeps the text whole or pushes it fully out of frame; for bottom-band text use
+  `zoom ~1.2, focus_y 0` to crop it off. Measure the subject's face x per camera angle
+  (profile close-ups often need crop_x ≈ 0.6) and check a frame at the start/mid/end of every segment.
+
 ### 5. Preview, check, then render
 1. `render.py plan.json --dry-run`: check timeline, chunks, and cards.
 2. `render.py plan.json --draft`, then extract frames at every card, transition, and B-roll
