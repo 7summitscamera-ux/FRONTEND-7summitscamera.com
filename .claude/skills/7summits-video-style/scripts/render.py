@@ -405,6 +405,14 @@ def render_aroll(plan, st, tmp, draft, plan_dir):
                   f"[a]{cover(W, H)},gblur=sigma=30,eq=brightness=-0.15[bg];"
                   f"[b]scale={fw}:-2,crop='min(iw,{W})':ih:(iw-ow)*{cx}:0,setsar=1[fg];"
                   f"[bg][fg]overlay=(W-w)/2:{H}*{fg_y}-h/2[v]")
+        elif z < 1.0:
+            # zoom-out that stays portrait: full-width picture at z*H tall (shows more of the
+            # 16:9 source), thin top/bottom bands filled with a blurred copy of the same shot
+            fh = int(H * z) // 2 * 2
+            fc = (f"[0:v]fps={fps},split[a][b];"
+                  f"[a]{cover(W, H)},gblur=sigma=30,eq=brightness=-0.1[bg];"
+                  f"[b]scale=-2:{fh},crop={W}:{fh}:(iw-ow)*{cx}:0,setsar=1[fg];"
+                  f"[bg][fg]overlay=0:({H}-h)/2[v]")
         else:
             zw, zh = int(W * z) // 2 * 2, int(H * z) // 2 * 2
             fc = (f"[0:v]fps={fps},scale={W}:{H}:force_original_aspect_ratio=increase,"

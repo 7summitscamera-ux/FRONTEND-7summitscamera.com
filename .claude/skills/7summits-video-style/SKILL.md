@@ -94,6 +94,8 @@ For 4K/HEVC sources, make a 540p proxy first (analysis, transcript, drafts) and 
   that keeps the text whole or pushes it fully out of frame; for bottom-band text use
   `zoom ~1.2, focus_y 0` to crop it off. Measure the subject's face x per camera angle
   (profile close-ups often need crop_x ≈ 0.6) and check a frame at the start/mid/end of every segment.
+- A close-up that still feels too tight at zoom 1.0: use `zoom: 0.85` on that segment (portrait-safe
+  zoom-out: full-width picture ~18% wider, thin blurred bands top/bottom; never a landscape strip).
 
 ### 5. Preview, check, then render
 1. `render.py plan.json --dry-run`: check timeline, chunks, and cards.
