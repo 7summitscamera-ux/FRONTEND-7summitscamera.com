@@ -160,9 +160,9 @@ def ass_header(st):
            "Shadow, Alignment, MarginL, MarginR, MarginV, Encoding")
     styles = [
         f"Style: Caption,{f['caption']},{z['caption']},{white},{white},{blk},{shadow},0,0,0,0,100,100,0,0,1,1.4,1.5,5,0,0,0,1",
-        f"Style: Lead,{f['caption']},{z['lead']},{white},{white},{blk},{shadow},0,0,0,0,100,100,0,0,1,0,2.5,5,0,0,0,1",
+        f"Style: Lead,{f['caption']},{z['lead']},{white},{white},{blk},{shadow},0,0,0,0,100,100,0,0,1,1.5,2.5,5,0,0,0,1",
         f"Style: Key,{f['keyword']},{z['keyword']},{white},{white},{blk},{shadow},0,0,0,0,100,100,-1,0,1,0,3,5,0,0,0,1",
-        f"Style: KeyGreen,{f['keyword']},{z['keyword']},{green},{green},{blk},{shadow},0,0,0,0,100,100,-1,0,1,0,3,5,0,0,0,1",
+        f"Style: KeyGreen,{f['keyword']},{z['keyword']},{green},{green},{blk},{shadow},0,0,0,0,100,100,-1,0,1,3,3,5,0,0,0,1",  # dark stroke: readable on any shirt/background
         f"Style: KeyBox,{f['keyword']},{z['keyword']},{white},{white},{orange},{orange},0,0,0,0,100,100,-1,0,3,{pad},0,5,0,0,0,1",
         f"Style: Accent,{f['accent']},{z['accent']},{white},{white},{blk},{shadow},0,-1,0,0,100,100,0,0,1,0,2.5,5,0,0,0,1",
         f"Style: Serif,{f['morph_serif']},{z['keyword']},{white},{white},{blk},{shadow},0,0,0,0,100,100,2,0,1,0,3,5,0,0,0,1",

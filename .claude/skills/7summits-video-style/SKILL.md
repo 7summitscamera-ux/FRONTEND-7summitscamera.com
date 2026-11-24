@@ -124,6 +124,10 @@ For 4K/HEVC sources, make a 540p proxy first (analysis, transcript, drafts) and 
   (`accent`, e.g. "ke", "vs", "&") between two lines. Pop: scale 118% → 100% in 140 ms, lines staggered 0.12 s.
   `morph: true` shows the word in a serif for 0.35 s before snapping to the bold style (use once per video, on the key term).
   Use 1 card per 5–8 s at most. Do not put cards on consecutive sentences.
+  Pick card moments by meaning, not by timer: the hook's answer, a definition, a contrast
+  ("beda dengan…"), a consequence ("tanpa…"), the key claim. Two cards may chain one sentence
+  (e.g. "MENGAJAK PENONTON" → "untuk berada / BENAR-BENAR DI LOKASI SET"); keep leads non-repetitive.
+  Green text and the small lead line carry a dark stroke so they stay readable on saturated shirts.
 - **B-roll**: full-screen or split-screen (two 16:9 panels stacked over a blurred fill, credit
   `@handle` bottom-right). Gear/product close-ups in B&W with slow push-in (ken burns).
   Voice continues under B-roll (L-cut); captions stay on top.
