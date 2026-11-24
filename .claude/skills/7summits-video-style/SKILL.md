@@ -19,6 +19,7 @@ user has answered the confirmation questions below.
 | `scripts/analyze.sh <video>` | Probe, cut list, contact sheet, sample frames. Run first on any new footage. |
 | `scripts/transcribe.py <video> -o words.json [--start --end]` | Word timestamps (faster-whisper, `pip install faster-whisper`). |
 | `scripts/render.py plan.json [--dry-run] [--draft]` | Render the plan. `--dry-run` prints timeline/captions/cards, `--draft` is a fast preview. |
+| `scripts/face_center.py plan.json --video proxy.mp4` | Face detection: sets crop_x so the talent is centered per segment; long segments get a smooth tracking pan (`crop_track`). Mark a segment `"lock_crop": true` to keep a manual crop. |
 | `assets/style.json` | All style tokens (fonts, colors, sizes, timings). Edit here, never hard-code in plans. |
 | `templates/edit_plan.example.json` | Annotated plan to copy from. |
 
@@ -94,6 +95,13 @@ For 4K/HEVC sources, make a 540p proxy first (analysis, transcript, drafts) and 
   that keeps the text whole or pushes it fully out of frame; for bottom-band text use
   `zoom ~1.2, focus_y 0` to crop it off. Measure the subject's face x per camera angle
   (profile close-ups often need crop_x ≈ 0.6) and check a frame at the start/mid/end of every segment.
+- Align every segment boundary to the source's camera cuts (`select='gt(scene,0.3)'`): a boundary a few
+  frames off shows the wrong framing for 0.1–0.2 s and reads as a glitch/zoom jump.
+- Run `face_center.py` after building the plan (needs `pip install "opencv-python-headless==4.10.0.84"`).
+- Burned-in text that portrait cannot show whole (full-width B-roll titles): zoom the shot out (0.85),
+  mark the window as replaced (not a clash) and put a readable card of the same words in a clean band.
+- Closing: `"outro_fade": 1.5` holds the last frame and fades picture + sound after the content ends
+  (no dialog or visual is cut); a closing card stays up through the fade.
 - A close-up that still feels too tight at zoom 1.0: use `zoom: 0.85` on that segment (portrait-safe
   zoom-out: full-width picture ~18% wider, thin blurred bands top/bottom; never a landscape strip).
 

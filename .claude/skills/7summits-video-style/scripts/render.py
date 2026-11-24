@@ -326,7 +326,10 @@ def build_ass(plan, st, tl, plan_dir, brolls):
             pos = f"{{\\an5\\pos({W / 2:.0f},{y:.0f})\\q0}}"
             events.append(dialogue(s, e, "Caption", pos + text, 1, mx))
 
+    hold = float(plan.get("outro_fade", 0) or 0)
     for c in cards:
+        if hold and c["e"] >= tl.duration - 0.6:
+            c = {**c, "e": tl.duration + hold}  # a closing card stays up through the fade
         events += card_events(c, st)
 
     T = st["motion"]["transition_dur"]
@@ -383,6 +386,17 @@ def cover(W, H):
     return f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1"
 
 
+def crop_x_expr(seg, default):
+    """crop_x as a constant, or a piecewise-linear ffmpeg expression of t from crop_track."""
+    tr = seg.get("crop_track")
+    if not tr:
+        return str(default)
+    expr = str(tr[-1][1])
+    for (t0, c0), (t1, c1) in reversed(list(zip(tr, tr[1:]))):
+        expr = f"if(lt(t,{t1}),{c0}+({c1}-{c0})*(t-{t0})/{max(t1 - t0, 1e-3)},{expr})"
+    return f"'{expr}'"
+
+
 def render_aroll(plan, st, tmp, draft, plan_dir):
     W, H, fps = st["canvas"]["w"], st["canvas"]["h"], st["canvas"]["fps"]
     ar = plan["aroll"]
@@ -395,7 +409,7 @@ def render_aroll(plan, st, tmp, draft, plan_dir):
         fit = seg.get("fit", ar.get("fit", "cover"))  # per-segment override enables hybrid layouts
         z = seg.get("zoom", levels[i % len(levels)] if levels else 1.0)
         fy = seg.get("focus_y", focus_y)
-        cx = seg.get("crop_x", ar.get("crop_x", 0.5))
+        cx = crop_x_expr(seg, seg.get("crop_x", ar.get("crop_x", 0.5)))
         d = seg["out"] - seg["in"]
         if fit == "contain_blur":
             # 16:9 source kept whole (burned-in captions survive) over a blurred fill
@@ -596,20 +610,28 @@ def compose(plan, st, tmp, base, brolls, broll_files, ass_text, cards, out, draf
         fc.append(f"[{cur}][b{n}]overlay=x=0:y='{'+'.join(y)}':eof_action=pass:"
                   f"enable='between(t,{at},{at + D})'[v{n}]")
         cur = f"v{n}"
-    fc.append(f"[{cur}]subtitles=f=captions.ass:fontsdir=fonts,format=yuv420p[vout]")
+    dur = _duration(base)
+    hold = float(plan.get("outro_fade", 0) or 0)
+    if hold:
+        # closing: hold the last frame and fade picture + sound to black after the content ends
+        fc.append(f"[{cur}]tpad=stop_mode=clone:stop_duration={hold}[vh]")
+        cur = "vh"
+    fade_v = f",fade=t=out:st={dur:.3f}:d={hold}" if hold else ""
+    fc.append(f"[{cur}]subtitles=f=captions.ass:fontsdir=fonts{fade_v},format=yuv420p[vout]")
 
-    a_parts = ["[0:a]anull[a0]"]
+    a_parts = [f"[0:a]apad=pad_dur={hold}[a0]" if hold else "[0:a]anull[a0]"]
     labels = ["[a0]"]
     for n, ((_, t, vol), si) in enumerate(zip(hits, s_idx)):
         ms = int(t * 1000)
         a_parts.append(f"[{si}:a]volume={vol},adelay={ms}|{ms}[s{n}]")
         labels.append(f"[s{n}]")
     a_parts.append(f"{''.join(labels)}amix=inputs={len(labels)}:normalize=0:duration=first,"
-                   f"loudnorm=I={au['loudness_lufs']}:TP=-1:LRA=11[aout]")
+                   f"loudnorm=I={au['loudness_lufs']}:TP=-1:LRA=11"
+                   + (f",afade=t=out:st={dur:.3f}:d={hold}" if hold else "") + "[aout]")
     fc += a_parts
     run(["ffmpeg", "-y", "-v", "error", *inputs, "-filter_complex", ";".join(fc),
          "-map", "[vout]", "-map", "[aout]", "-r", str(fps), *enc_args(st, draft),
-         "-movflags", "+faststart", "-t", f"{_duration(base):.3f}", str(out)], cwd=tmp)
+         "-movflags", "+faststart", "-t", f"{dur + hold:.3f}", str(out)], cwd=tmp)
 
 
 def _duration(path):
